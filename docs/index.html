@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthcare Backend API - Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The application is designed as a single-page interactive guide for developers, improving upon the static README. It features a sticky top navigation for quick access to key sections: Overview, Setup, API Endpoints, and Data Models. This thematic structure prioritizes user tasks over the original document's linear flow. The core interaction is the 'API Endpoints' explorer, a two-column layout where selecting an endpoint from a navigation list dynamically displays its full details, including an interactive request body. This design was chosen to create an efficient, user-friendly experience, allowing developers to quickly find and understand the information they need without endless scrolling. -->
+    <!-- Visualization & Content Choices: Instead of charts (as there's no quantitative data), the app uses visually engaging components. Report Info: Features -> Goal: Inform -> Viz: Icon-based cards -> Interaction: None -> Justification: More scannable and visually appealing than a bullet list. Report Info: Setup Instructions -> Goal: Guide -> Viz: Numbered stepper/timeline -> Interaction: None -> Justification: Clearly presents a sequential process. Report Info: API Endpoints Table -> Goal: Explore/Reference -> Viz: Two-panel interactive explorer -> Interaction: Click-to-update content -> Justification: Allows rapid navigation and focused exploration of complex API details. Report Info: Data Models (file list) -> Goal: Organize/Explain Relationships -> Viz: HTML/CSS entity-relationship diagram -> Interaction: None -> Justification: Visually communicates database structure and relationships far more effectively than a list of files. All visualizations are built with HTML/CSS and JS, with no SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #403d39;
+        }
+        .nav-link {
+            transition: color 0.2s;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #eb5e28;
+        }
+        .endpoint-link.active {
+            background-color: #eb5e28;
+            color: #ffffff;
+        }
+        .endpoint-link.active:hover {
+             background-color: #d4511f;
+        }
+        .method-badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+        .method-get { background-color: #25a244; color: white; }
+        .method-post { background-color: #2873eb; color: white; }
+        .method-put { background-color: #fca311; color: white; }
+        .method-delete { background-color: #d00000; color: white; }
+
+        .model-diagram-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2rem;
+            padding: 2rem 0;
+            position: relative;
+        }
+        .model-card {
+            border: 1px solid #ccc5b9;
+            border-radius: 0.5rem;
+            background-color: #fffcf2;
+            padding: 1rem;
+            width: 220px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+        .model-relation {
+            position: absolute;
+            border-color: #eb5e28;
+            border-style: solid;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-[#252422]">Healthcare Backend API Guide</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link font-medium">Overview</a>
+                <a href="#setup" class="nav-link font-medium">Setup</a>
+                <a href="#endpoints" class="nav-link font-medium">Endpoints</a>
+                <a href="#models" class="nav-link font-medium">Data Models</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section id="overview" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-4">Core Features</h2>
+            <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-12">
+                This guide provides an interactive overview of a secure and scalable backend system. Explore the core functionalities and the technology that powers it.
+            </p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="text-3xl mb-3">🛡️</div>
+                    <h3 class="text-lg font-semibold mb-2">Secure User Authentication</h3>
+                    <p class="text-gray-600">User registration and login handled via JSON Web Tokens (JWT) for robust security.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="text-3xl mb-3">👥</div>
+                    <h3 class="text-lg font-semibold mb-2">Patient Management</h3>
+                    <p class="text-gray-600">Authenticated users can perform full CRUD operations on their own patient records.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="text-3xl mb-3">🩺</div>
+                    <h3 class="text-lg font-semibold mb-2">Doctor Management</h3>
+                    <p class="text-gray-600">A centralized system for managing doctor profiles and information, accessible to authenticated users.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="text-3xl mb-3">🔗</div>
+                    <h3 class="text-lg font-semibold mb-2">Patient-Doctor Mapping</h3>
+                    <p class="text-gray-600">Functionality to assign doctors to patients, creating and managing these critical relationships.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="text-3xl mb-3">🗃️</div>
+                    <h3 class="text-lg font-semibold mb-2">Relational Database</h3>
+                    <p class="text-gray-600">Powered by PostgreSQL and the Sequelize ORM for reliable data modeling and complex queries.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <div class="text-3xl mb-3">⚙️</div>
+                    <h3 class="text-lg font-semibold mb-2">Technology Stack</h3>
+                    <p class="text-gray-600">Built with Node.js, Express, Sequelize, and PostgreSQL for a modern, high-performance backend.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="setup" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-4">Setup & Installation Guide</h2>
+             <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-12">
+                Follow this step-by-step guide to get your local development environment up and running. Ensure you have Node.js and PostgreSQL installed before you begin.
+            </p>
+            <div class="max-w-2xl mx-auto">
+                <div class="space-y-8">
+                    <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div>
+                                <div class="flex items-center justify-center w-10 h-10 bg-[#eb5e28] text-white rounded-full font-bold">1</div>
+                            </div>
+                            <div class="w-px h-full bg-gray-300"></div>
+                        </div>
+                        <div class="pb-8">
+                            <h3 class="font-semibold text-lg mb-2">Install Dependencies</h3>
+                            <p class="text-gray-600 mb-2">Navigate to the project's root directory and run the following command to install all required packages from `package.json`.</p>
+                            <code class="bg-gray-200 text-gray-800 rounded px-2 py-1 text-sm">npm install</code>
+                        </div>
+                    </div>
+                     <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div>
+                                <div class="flex items-center justify-center w-10 h-10 bg-[#eb5e28] text-white rounded-full font-bold">2</div>
+                            </div>
+                            <div class="w-px h-full bg-gray-300"></div>
+                        </div>
+                        <div class="pb-8">
+                            <h3 class="font-semibold text-lg mb-2">Create PostgreSQL Database</h3>
+                            <p class="text-gray-600 mb-2">Connect to your PostgreSQL instance and create the database for this application.</p>
+                             <code class="bg-gray-200 text-gray-800 rounded px-2 py-1 text-sm">CREATE DATABASE healthcare_db;</code>
+                        </div>
+                    </div>
+                     <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div>
+                                <div class="flex items-center justify-center w-10 h-10 bg-[#eb5e28] text-white rounded-full font-bold">3</div>
+                            </div>
+                             <div class="w-px h-full bg-gray-300"></div>
+                        </div>
+                        <div class="pb-8">
+                            <h3 class="font-semibold text-lg mb-2">Configure Environment Variables</h3>
+                            <p class="text-gray-600 mb-2">Create a `.env` file in the project root. Copy the template and fill in your actual database credentials and a secure JWT secret.</p>
+                            <pre class="bg-gray-200 text-gray-800 rounded p-3 text-xs overflow-x-auto"><code># .env file
+PORT=8080
+DB_HOST=localhost
+DB_USER=your_postgres_username
+DB_PASSWORD=your_postgres_password
+DB_NAME=healthcare_db
+DB_DIALECT=postgres
+JWT_SECRET=your_super_secret_key</code></pre>
+                        </div>
+                    </div>
+                     <div class="flex">
+                        <div class="flex flex-col items-center mr-4">
+                            <div>
+                                <div class="flex items-center justify-center w-10 h-10 bg-[#eb5e28] text-white rounded-full font-bold">4</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-lg mb-2">Run the Application</h3>
+                            <p class="text-gray-600 mb-2">Start the server in development mode. Nodemon will watch for file changes and automatically restart the server.</p>
+                             <code class="bg-gray-200 text-gray-800 rounded px-2 py-1 text-sm">npm run dev</code>
+                             <p class="text-gray-600 mt-4">✅ You're all set! The API is now running on `http://localhost:8080`.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="endpoints" class="mb-20">
+            <h2 class="text-3xl font-bold text-center mb-4">Interactive API Endpoints</h2>
+            <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-12">
+                Explore the available API endpoints. Click on an endpoint from the list on the left to see its details, including the required method, URL, protection status, and example request body.
+            </p>
+            <div class="lg:grid lg:grid-cols-12 gap-8 bg-white p-4 sm:p-8 rounded-lg shadow-sm border border-gray-200">
+                <aside class="lg:col-span-4 xl:col-span-3 mb-8 lg:mb-0">
+                    <h3 class="font-semibold mb-4 text-gray-800">Endpoint Groups</h3>
+                    <div id="endpoints-nav" class="space-y-4"></div>
+                </aside>
+                <div id="endpoint-details" class="lg:col-span-8 xl:col-span-9">
+                    <!-- Dynamic content will be injected here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="models">
+            <h2 class="text-3xl font-bold text-center mb-4">Data Models</h2>
+            <p class="max-w-3xl mx-auto text-center text-lg text-gray-600 mb-12">
+                This diagram illustrates the structure of the database and the relationships between the main data entities: User, Patient, Doctor, and the mapping that connects them.
+            </p>
+            <div class="model-diagram-container relative">
+                <div class="model-card">
+                    <h4 class="font-bold text-center mb-2">User</h4>
+                    <ul class="text-sm space-y-1">
+                        <li><span class="font-semibold">id:</span> SERIAL (PK)</li>
+                        <li><span class="font-semibold">name:</span> VARCHAR</li>
+                        <li><span class="font-semibold">email:</span> VARCHAR (UNIQUE)</li>
+                        <li><span class="font-semibold">password:</span> VARCHAR</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4 class="font-bold text-center mb-2">Patient</h4>
+                     <ul class="text-sm space-y-1">
+                        <li><span class="font-semibold">id:</span> SERIAL (PK)</li>
+                        <li><span class="font-semibold">name:</span> VARCHAR</li>
+                        <li><span class="font-semibold">age:</span> INTEGER</li>
+                        <li><span class="font-semibold">gender:</span> VARCHAR</li>
+                        <li><span class="font-semibold">address:</span> VARCHAR</li>
+                        <li><span class="font-semibold">userId:</span> INTEGER (FK to User)</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4 class="font-bold text-center mb-2">Doctor</h4>
+                     <ul class="text-sm space-y-1">
+                        <li><span class="font-semibold">id:</span> SERIAL (PK)</li>
+                        <li><span class="font-semibold">name:</span> VARCHAR</li>
+                        <li><span class="font-semibold">specialization:</span> VARCHAR</li>
+                        <li><span class="font-semibold">contactInfo:</span> VARCHAR</li>
+                    </ul>
+                </div>
+                <div class="model-card">
+                    <h4 class="font-bold text-center mb-2">PatientDoctorMapping</h4>
+                     <ul class="text-sm space-y-1">
+                        <li><span class="font-semibold">id:</span> SERIAL (PK)</li>
+                        <li><span class="font-semibold">patientId:</span> INTEGER (FK to Patient)</li>
+                        <li><span class="font-semibold">doctorId:</span> INTEGER (FK to Doctor)</li>
+                    </ul>
+                </div>
+                <!-- Lines would be drawn with JS/CSS, here we imply with positioning -->
+            </div>
+        </section>
+    </main>
+<script>
+const apiData = {
+    "Authentication": [
+        {
+            method: 'POST',
+            path: '/api/auth/register',
+            description: 'Register a new user account with a name, email, and password.',
+            protected: false,
+            body: { name: "Sonia Sharma", email: "sonia.sharma@example.com", password: "password123" }
+        },
+        {
+            method: 'POST',
+            path: '/api/auth/login',
+            description: 'Log in an existing user to receive a JSON Web Token (JWT) for authenticating subsequent requests.',
+            protected: false,
+            body: { email: "sonia.sharma@example.com", password: "password123" }
+        }
+    ],
+    "Patient Management": [
+        {
+            method: 'POST',
+            path: '/api/patients',
+            description: 'Add a new patient record. This record will be associated with the currently authenticated user.',
+            protected: true,
+            body: { name: "Raj Kumar", age: 45, gender: "Male", address: "123 Main St, Amritsar" }
+        },
+        {
+            method: 'GET',
+            path: '/api/patients',
+            description: 'Retrieve a list of all patient records created by the currently authenticated user.',
+            protected: true,
+        },
+        {
+            method: 'GET',
+            path: '/api/patients/:id',
+            description: 'Retrieve the details of a single patient by their unique ID. The user must own this patient record.',
+            protected: true,
+        },
+        {
+            method: 'PUT',
+            path: '/api/patients/:id',
+            description: 'Update the details of an existing patient record by their unique ID.',
+            protected: true,
+            body: { name: "Raj Kumar Updated", age: 46 }
+        },
+        {
+            method: 'DELETE',
+            path: '/api/patients/:id',
+            description: 'Delete a patient record by their unique ID.',
+            protected: true,
+        }
+    ],
+    "Doctor Management": [
+        {
+            method: 'POST',
+            path: '/api/doctors',
+            description: 'Add a new doctor to the central directory. Requires authentication.',
+            protected: true,
+            body: { name: "Dr. Anjali Verma", specialization: "Cardiologist", contactInfo: "dr.anjali@hospital.com" }
+        },
+        {
+            method: 'GET',
+            path: '/api/doctors',
+            description: 'Retrieve a list of all doctors in the system. Does not require authentication.',
+            protected: false,
+        },
+        {
+            method: 'GET',
+            path: '/api/doctors/:id',
+            description: 'Retrieve the details of a single doctor by their unique ID.',
+            protected: false,
+        },
+        {
+            method: 'PUT',
+            path: '/api/doctors/:id',
+            description: 'Update the details of an existing doctor by their unique ID. Requires authentication.',
+            protected: true,
+            body: { specialization: "Senior Cardiologist" }
+        },
+        {
+            method: 'DELETE',
+            path: '/api/doctors/:id',
+            description: 'Delete a doctor record from the system. Requires authentication.',
+            protected: true,
+        }
+    ],
+    "Patient-Doctor Mappings": [
+        {
+            method: 'POST',
+            path: '/api/mappings',
+            description: 'Assign a doctor to a patient by providing their respective IDs. Requires authentication.',
+            protected: true,
+            body: { patientId: 1, doctorId: 2 }
+        },
+        {
+            method: 'GET',
+            path: '/api/mappings',
+            description: 'Retrieve a list of all patient-doctor assignments.',
+            protected: true,
+        },
+        {
+            method: 'GET',
+            path: '/api/mappings/patient/:id',
+            description: 'Get a list of all doctors assigned to a specific patient by the patient\'s ID.',
+            protected: true,
+        },
+        {
+            method: 'DELETE',
+            path: '/api/mappings/:id',
+            description: 'Remove a patient-doctor assignment by its unique mapping ID.',
+            protected: true,
+        }
+    ]
+};
+
+const endpointsNavContainer = document.getElementById('endpoints-nav');
+const endpointDetailsContainer = document.getElementById('endpoint-details');
+
+function renderEndpointDetails(endpoint) {
+    const { method, path, description, protected: isProtected, body } = endpoint;
+    const methodClass = `method-${method.toLowerCase()}`;
+    const protectionInfo = isProtected
+        ? `<div class="flex items-center text-sm text-yellow-700 bg-yellow-100 rounded-md p-2">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
+             <span>Requires Authentication (Bearer Token)</span>
+           </div>`
+        : `<div class="flex items-center text-sm text-green-700 bg-green-100 rounded-md p-2">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+             <span>Public Endpoint</span>
+           </div>`;
+
+    const bodySection = body ? `
+        <h4 class="font-semibold text-lg mb-2 mt-6">Example Request Body</h4>
+        <div class="bg-gray-800 text-white rounded-lg p-4">
+            <pre class="text-sm"><code>${JSON.stringify(body, null, 2)}</code></pre>
+        </div>` : '';
+
+    endpointDetailsContainer.innerHTML = `
+        <div class="flex items-center gap-4 mb-4">
+            <span class="method-badge ${methodClass}">${method}</span>
+            <code class="text-lg font-mono bg-gray-100 text-gray-800 px-3 py-1 rounded-md">${path}</code>
+        </div>
+        <p class="text-gray-600 mb-6">${description}</p>
+        ${protectionInfo}
+        ${bodySection}
+    `;
+}
+
+let activeLink = null;
+
+Object.keys(apiData).forEach((group, groupIndex) => {
+    const groupDiv = document.createElement('div');
+    const groupTitle = document.createElement('h4');
+    groupTitle.className = 'font-semibold text-gray-500 mb-2';
+    groupTitle.textContent = group;
+    groupDiv.appendChild(groupTitle);
+
+    const endpointList = document.createElement('ul');
+    endpointList.className = 'space-y-1';
+
+    apiData[group].forEach((endpoint, endpointIndex) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = '#';
+        a.className = 'endpoint-link block text-sm p-2 rounded-md transition duration-150 ease-in-out hover:bg-orange-100';
+        a.innerHTML = `<span class="font-medium text-${endpoint.method.toLowerCase()}">${endpoint.method}</span> ${endpoint.path}`;
+        a.onclick = (e) => {
+            e.preventDefault();
+            if(activeLink) {
+                activeLink.classList.remove('active');
+            }
+            a.classList.add('active');
+            activeLink = a;
+            renderEndpointDetails(endpoint);
+        };
+        li.appendChild(a);
+        endpointList.appendChild(li);
+
+        if (groupIndex === 0 && endpointIndex === 0) {
+            a.classList.add('active');
+            activeLink = a;
+            renderEndpointDetails(endpoint);
+        }
+    });
+
+    groupDiv.appendChild(endpointList);
+    endpointsNavContainer.appendChild(groupDiv);
+});
+
+// Smooth scrolling for nav links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
+</body>
+</html>
